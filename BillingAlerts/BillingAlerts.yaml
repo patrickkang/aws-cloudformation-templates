@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Billing alerts for AWS Account
+
+Parameters:
+  EmailAddress:
+    Type: String
+    Description: "Enter your email address for billing alerts"
+    AllowedPattern: ^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$
+
+Resources:
+  BillingAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: "BillingAlerts"
+      Subscription:
+        - Endpoint: !Ref EmailAddress
+          Protocol: email
+  # CloudWatch Alarm: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-alarm.html
+  MoreThanFiveDollars:
+    Type: AWS::CloudWatch::Alarm
+    DependsOn: BillingAlertTopic
+    Properties:
+      AlarmActions:
+        - !Ref BillingAlertTopic
+      AlarmDescription: Billing alert for $5.00
+      AlarmName: BillingAlertMoreThanFiveDollars
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions: 
+        - Name: Currency
+          Value: USD
+      EvaluationPeriods: 1
+      MetricName: EstimatedCharges
+      Namespace: AWS/Billing
+      Period: 21600 # 6 hours
+      Statistic: Maximum
+      Threshold: 5
+  MoreThanTenDollars:
+    Type: AWS::CloudWatch::Alarm
+    DependsOn: BillingAlertTopic
+    Properties:
+      AlarmActions:
+        - !Ref BillingAlertTopic
+      AlarmDescription: Billing alert for $10.00
+      AlarmName: BillingAlertMoreThanTenDollars
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions: 
+        - Name: Currency
+          Value: USD
+      EvaluationPeriods: 1
+      MetricName: EstimatedCharges
+      Namespace: AWS/Billing
+      Period: 21600 # 6 hours
+      Statistic: Maximum
+      Threshold: 10
+  MoreThanTwentyDollars:
+    Type: AWS::CloudWatch::Alarm
+    DependsOn: BillingAlertTopic
+    Properties:
+      AlarmActions:
+        - !Ref BillingAlertTopic
+      AlarmDescription: Billing alert for $20.00
+      AlarmName: BillingAlertMoreThanTwentyDollars
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions: 
+        - Name: Currency
+          Value: USD
+      EvaluationPeriods: 1
+      MetricName: EstimatedCharges
+      Namespace: AWS/Billing
+      Period: 21600 # 6 hours
+      Statistic: Maximum
+      Threshold: 20
+  MoreThanFourtyDollars:
+    Type: AWS::CloudWatch::Alarm
+    DependsOn: BillingAlertTopic
+    Properties:
+      AlarmActions:
+        - !Ref BillingAlertTopic
+      AlarmDescription: Billing alert for $40.00
+      AlarmName: BillingAlertMoreThanFourtyDollars
+      ComparisonOperator: GreaterThanThreshold
+      DatapointsToAlarm: 1
+      Dimensions: 
+        - Name: Currency
+          Value: USD
+      EvaluationPeriods: 1
+      MetricName: EstimatedCharges
+      Namespace: AWS/Billing
+      Period: 21600 # 6 hours
+      Statistic: Maximum
+      Threshold: 40
